@@ -1,0 +1,236 @@
+#!/bin/bash
+
+# Function to validate Player Code
+# This function is used to validate the entered player code.
+# It returns boolean value i.e 0 (true) or 1 (false)
+validatePlayerCode () {
+    plr="${1,,}"    #To Lowercase
+    if [[ $plr == "lm" ||  $plr == "nj" ||  $plr == "kc" ||  $plr == "zz" || $plr == "hk" ]]
+    then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# Function to check dublicate Player Codes
+# This function is used to check dublicate players codes.
+# It returns boolean value i.e 0 (true) or 1 (false)
+checkDublicatePlayer () {
+    plra="${1,,}"   #To Lowercase
+    plrb="${2,,}"   #To Lowercase       
+    plrc="${3,,}"   #To Lowercase
+    if [[ $plra = $plrb || $plra = $plrc || $plrb = $plrc ]]
+    then
+        return 0
+    else
+        return 1
+    fi
+}
+
+#Function to welcome the user
+welcomeUser() {
+    echo -e "\n-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*"
+    echo -e "\nWelcome User,"
+    echo -e "\tUser ID: $1"
+    echo -e "\tUser Name: $2"
+    echo -e "\tDate: `date +'%b %d, %Y'`\tTime: `date +'%H:%M (GMT %:z)'`"
+    echo -e "\n-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*"
+}
+
+
+#Goodbye Function
+goodbye() {
+    echo -e "\n-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*"
+    echo -e "\n\t\t\t\tGoodBye!!"
+    echo -e "\n-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*\n"
+}
+
+#Function to validate the password
+validatePassword() {
+    key="yukino" #Secret Key
+    echo -e "\n-*-*-*-*-*-*-*-*-*-*-*-*-*-* WELCOME *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*"  
+    echo -e "\nPlease enter the Secret key: \c"
+    read inputKey
+    if [[ $key != $inputKey ]]
+    then
+        n=1
+        until [[ $key == $inputKey ]]
+        do
+            if [ $n -gt 3 ]
+            then
+            #cat goodbye
+                echo -e "\nToo many wrong attempts."
+                goodbye
+                sleep 1
+                exit #Exist the program if the user enter incorrect key multiple times 
+            fi
+            echo -e "\nIncorrect Key. Try again ($(( 4 - $n )) attempt remaining): \c"
+            read inputKey
+            ((n++))
+        done
+    fi
+}
+
+country() {
+    echo "----------------------------"
+    echo "| SN  |  Country   |  Code |"
+    echo "|------------------------- |"
+    echo "| 1   |  Brazil    |  BRZ  |"
+    echo "| 2   |  Argentina |  ARG  |"
+    echo "| 3   |  Nepal     |  NEP  |"
+    echo "| 4   |  China     |  CHI  |"
+    echo "| 5   |  England   |  ENG  |"
+    echo "----------------------------"
+}
+
+player(){
+    echo "----------------------------------"
+    echo "| SN  |  Player           | Code |"
+    echo "|--------------------------------|"
+    echo "| 1   |  Lionel Messi     |  LM  |"
+    echo "| 2   |  Neymar Junior    |  NJ  |"
+    echo "| 3   |  Kiran Chemjong   |  KC  |"
+    echo "| 4   |  Zheng Zhi        |  ZZ  |"
+    echo "| 5   |  Harry Kane       |  HK  |"
+    echo "----------------------------------"
+}
+
+#Function to choose the best country
+bestCountry() {
+    echo -e "\nPlease choose the best football team.\n(Enter the country code)"
+    country
+    echo -e "> \c"
+    read choiceCountry
+
+    bestCountry="nep"   #Setting best country to NEP
+
+    #Looping until the best country is entered
+    while true
+    do
+        case "${choiceCountry,,}" in 
+            $bestCountry)
+            echo -e "\n-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*\n"
+            echo "Nepal
+~~~~~
+The Nepal national football team represents Nepal in International men's football,
+and is governed by the All Nepal Football Association(ANFA). The Nepalese football
+team is also a member of the Asian Football Confedration(AFC)."
+                break
+            ;;
+            *)
+                echo -e "\nIncorrect Guess. Try Again: \c"
+                read choiceCountry
+            ;;
+        esac
+    done
+}
+
+
+
+#Function to choose the best player among five
+choosePlayer() {
+    bestCountry
+
+    echo -e "\n-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*"
+    echo -e "\nPlease choose any three Players.\n(Enter the three player code each separated by a space)"
+    player
+    echo -e "> \c"
+    read plra plrb plrc
+
+
+    #Validating the user input for Player codes
+    while true
+    do 
+        validatePlayerCode "$plra"    #Calling validatePlayerCode() function
+        valplra=$?                      #Storing the returned value from the function
+        validatePlayerCode "$plrb"    #Calling validatePlayerCode() function
+        valplrb=$?                  #Storing the returned value from the function
+        validatePlayerCode "$plrc"    #Calling validatePlayerCode() function
+        valplrc=$?                      #Storing the returned value from the function
+
+        if [[ $valplra == 1 || $valplrb == 1 || $valplrc == 1 ]]
+        then
+            echo -e "\nIncorrect Player Codes. Try Again: \c"
+            read plra plrb plrc
+        else
+            checkDublicatePlayer $plra $plrb $plrc
+            dublicateplr=$?
+            if [[ $dublicateplr == 0 ]]
+            then
+                echo -e "\nDublicate Player Codes. Try Again: \c"
+                read plra plrb plrc
+            else
+                break
+            fi
+        fi
+    done
+
+    echo -e "\n-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*"
+    echo -e "\nPlease choose one player.\n(Enter the ID of the player from the list.)"
+    echo "-----------------------"
+    plr=""
+    PS3="-----------------------
+> "
+    #Using select statement for choosing one player among the three
+    select i in "${plra^^}" "${plrb^^}" "${plrc^^}"
+    do 
+        echo 
+        if [[ $i != "" ]]
+        then
+            plr=$i
+            break
+        fi
+        PS3="Invalid Player ID. Try Again: "
+    done
+    PS3="> "
+
+    echo -e "\n-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*\n"
+    
+    #Display information on the choosen player if available
+    if [[ -r "${plr,,}" ]]
+    then
+        echo -e ""${plr^^}"- Professional Football Player"
+        echo -e "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
+
+        cat "${plr,,}"
+    else
+        echo -e "No Information available on Player: "${plr^^}""
+        echo -e "\n-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*\n"
+        choosePlayer
+    fi
+    
+    echo -e "\n-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*"
+
+    echo -e "\nDo you wish to start over again?(yes/no)\n> \c"
+    read startAgain
+
+    if [[ "${startAgain,,}" == "yes" || "${startAgain,,}" == "y" ]]
+    then
+        choosePlayer
+    else
+        goodbye
+        exit
+    fi
+}
+
+# ================================Start============================================
+
+userId="19031382"
+userName="Prastut"
+if [[ $# != 2 || $1 != $userName || $2 != $userId ]] 
+then    #Executes if the user doesnot pass required parameters
+    echo -e "\n-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*"
+    echo -e "\nInvalid Arguments." 
+    echo -e "Please enter correct Username and UserID as first and second parameter respectively."
+    goodbye
+    exit    #Exiting the program if appropriate argument is not provided.
+fi
+
+#Function Call
+validatePassword
+welcomeUser $2 $1
+choosePlayer
+
+
+
